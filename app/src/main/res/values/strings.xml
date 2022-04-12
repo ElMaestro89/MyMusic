@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MyMusic</string>
+
+    <string name="thumbnail_description">Song thumbnail</string>
 </resources>

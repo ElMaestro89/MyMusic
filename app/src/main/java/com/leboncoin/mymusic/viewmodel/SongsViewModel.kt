@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.leboncoin.mymusic.helper.MapperHelper.mapSongsToAlbums
 import com.leboncoin.mymusic.poko.Song
 import com.leboncoin.mymusic.repository.SongsRepository
 import com.leboncoin.mymusic.retrofit.ISongs
@@ -44,6 +45,10 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
+//                    withContext(Dispatchers.Default) {
+//                        val albums = response.body()?.mapSongsToAlbums()
+//                    }
+
                     mockSongs.apply {
                         clear()
                         addAll(response.body() ?: mutableListOf())
@@ -51,7 +56,7 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
                     mSongs.postValue(mockSongs)
                 } else {
-                    Log.e("SongsViewModel", "Error : ${response.message()}")
+                    Log.e("SongsViewModel", "Error: ${response.message()}")
                 }
             }
         }
