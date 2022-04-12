@@ -4,5 +4,7 @@
     android:id="@+id/rv_albums"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbars="vertical"
+    android:scrollbarSize="5dp"
     tools:context=".activity.SongsActivity"
 />

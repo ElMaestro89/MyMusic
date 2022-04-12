@@ -33,7 +33,7 @@ class SongsActivity : AppCompatActivity() {
             setHasFixedSize(true)
 
             adapter = SongsAdapter(songsViewModel.songs.value ?: mutableListOf()) {
-                songsViewModel.testRefreshList()
+                songsViewModel.getSongs()
             }
         }
     }

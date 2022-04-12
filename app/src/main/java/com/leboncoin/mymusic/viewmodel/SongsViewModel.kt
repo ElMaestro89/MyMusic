@@ -1,17 +1,24 @@
 package com.leboncoin.mymusic.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.leboncoin.mymusic.poko.Song
+import com.leboncoin.mymusic.repository.SongsRepository
+import com.leboncoin.mymusic.retrofit.ISongs
+import kotlinx.coroutines.*
 
 class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val songsRepository: ISongs
+    private var job: Job? = null
+
     private val mockSongs by lazy {
         mutableListOf(
-            Song(1L, "Song 1", "https://via.placeholder.com/600/92c952", "https://via.placeholder.com/150/92c952"),
-            Song(2L, "Song 2", "https://via.placeholder.com/600/771796", "https://via.placeholder.com/150/771796")
+            Song(1L, 1L, "Song 1", "https://via.placeholder.com/600/92c952", "https://via.placeholder.com/150/92c952"),
+            Song(1L, 2L, "Song 2", "https://via.placeholder.com/600/771796", "https://via.placeholder.com/150/771796")
         )
     }
 
@@ -21,12 +28,40 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
             return mSongs
         }
 
-    fun testRefreshList() {
-        mockSongs.apply {
-            add(Song(2L, "Song 2", "https://via.placeholder.com/600/771796", "https://via.placeholder.com/150/771796"))
-            add(Song(1L, "Song 1", "https://via.placeholder.com/600/92c952", "https://via.placeholder.com/150/92c952"))
-        }
+    /**************
+     *    INIT    *
+     **************/
+    init {
+        songsRepository = SongsRepository.getInstance(application)
+    }
 
-        mSongs.postValue(mockSongs)
+    /*************
+     *    GET    *
+     *************/
+    fun getSongs() {
+        job = CoroutineScope(Dispatchers.IO).launch {
+            val response = songsRepository.getAllSongs()
+
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    mockSongs.apply {
+                        clear()
+                        addAll(response.body() ?: mutableListOf())
+                    }
+
+                    mSongs.postValue(mockSongs)
+                } else {
+                    Log.e("SongsViewModel", "Error : ${response.message()}")
+                }
+            }
+        }
+    }
+
+    /*******************
+     *    LIFECYCLE    *
+     *******************/
+    override fun onCleared() {
+        super.onCleared()
+        job?.cancel()
     }
 }
