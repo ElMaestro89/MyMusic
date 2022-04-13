@@ -2,10 +2,13 @@ package com.leboncoin.mymusic.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.leboncoin.mymusic.R
 import com.leboncoin.mymusic.activity.adapter.SongsAdapter
 import com.leboncoin.mymusic.databinding.ActivitySongsBinding
 import com.leboncoin.mymusic.viewmodel.SongsViewModel
@@ -22,6 +25,9 @@ class SongsActivity : AppCompatActivity() {
         binding = ActivitySongsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Init Toolbar
+        setSupportActionBar(binding.toolbar)
+
         initList()
         initData()
     }
@@ -33,7 +39,7 @@ class SongsActivity : AppCompatActivity() {
             setHasFixedSize(true)
 
             adapter = SongsAdapter(songsViewModel.songs.value ?: mutableListOf()) {
-                songsViewModel.getSongs()
+                // Not used yet
             }
         }
     }
@@ -43,5 +49,21 @@ class SongsActivity : AppCompatActivity() {
         songsViewModel.songs.observe(this) {
             binding.rvAlbums.adapter?.notifyDataSetChanged()
         }
+    }
+
+    /**************
+     *    MENU    *
+     **************/
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //TODO: Check if online or not
+        if (item.itemId == R.id.action_refresh)
+            songsViewModel.getSongs()
+
+        return super.onOptionsItemSelected(item)
     }
 }

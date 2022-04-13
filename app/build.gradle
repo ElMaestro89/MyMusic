@@ -17,8 +17,15 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
+            buildConfigField "String", "BASE_URL", "\"https://static.leboncoin.fr/img/shared/\""
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            buildConfigField "String", "BASE_URL", "\"https://static.leboncoin.fr/img/shared/\""
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
