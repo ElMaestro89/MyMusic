@@ -15,7 +15,7 @@ class SongsConverter {
     }
 
     @TypeConverter
-    fun toCountryLangList(value: String): List<Song> {
+    fun toSongList(value: String): List<Song> {
         val type = object : TypeToken<List<Song>>() {}.type
 
         return Gson().fromJson(value, type)

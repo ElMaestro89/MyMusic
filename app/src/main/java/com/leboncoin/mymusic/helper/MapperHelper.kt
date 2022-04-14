@@ -9,7 +9,10 @@ object MapperHelper {
         val mapSongs: MutableMap<Long, MutableList<Song>> = mutableMapOf()
 
         this.map {
-            mapSongs[it.albumId] = mapSongs.build(it.albumId, it)
+            if (mapSongs.containsKey(it.albumId))
+                mapSongs[it.albumId] = mapSongs.build(it.albumId, it)
+            else
+                mapSongs.put(it.albumId, mutableListOf(it))
         }
 
         return mapSongs.map {
