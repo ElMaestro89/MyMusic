@@ -2,10 +2,10 @@ package com.leboncoin.mymusic.viewmodel
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
+import com.leboncoin.mymusic.MyMusicApplication
 import com.leboncoin.mymusic.poko.Song
+import com.leboncoin.mymusic.repository.SongsDBRepository
 import com.leboncoin.mymusic.repository.SongsRepository
 import com.leboncoin.mymusic.retrofit.ISongs
 import kotlinx.coroutines.*
@@ -13,7 +13,7 @@ import kotlinx.coroutines.*
 class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val songsRepository: ISongs
-    private var job: Job? = null
+    private val repository: SongsDBRepository
 
     private val apiSongs = mutableListOf<Song>()
 
@@ -28,13 +28,33 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
      **************/
     init {
         songsRepository = SongsRepository.getInstance(application)
+        repository = SongsDBRepository((application as MyMusicApplication).database.songsDao())
+    }
+
+    /**************
+     *    ROOM    *
+     **************/
+    fun getDBSongs() {
+        viewModelScope.launch {
+            refreshList(repository.getAllSongs())
+        }
+    }
+
+    fun deleteAllSongs() {
+        viewModelScope.launch {
+            repository.deleteAllSongs()
+        }
+    }
+
+    private suspend fun insertDBSongs(songs: List<Song>) = viewModelScope.launch {
+        repository.insertSongs(songs)
     }
 
     /*************
      *    GET    *
      *************/
     fun getSongs() {
-        job = CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             val response = songsRepository.getAllSongs()
 
             withContext(Dispatchers.Main) {
@@ -43,25 +63,27 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
 //                        val albums = response.body()?.mapSongsToAlbums()
 //                    }
 
-                    apiSongs.apply {
-                        clear()
-                        addAll(response.body() ?: mutableListOf())
-                    }
+                    refreshList(response.body() ?: mutableListOf())
 
-                    mSongs.postValue(apiSongs)
+                    insertDBSongs(apiSongs)
                 } else {
-                    // TODO: Load albums from DB
                     Log.e("SongsViewModel", "Error: ${response.message()}")
+
+                    getDBSongs()
                 }
             }
         }
     }
 
-    /*******************
-     *    LIFECYCLE    *
-     *******************/
-    override fun onCleared() {
-        super.onCleared()
-        job?.cancel()
+    /****************
+     *    CUSTOM    *
+     ****************/
+    private fun refreshList(songs: List<Song>) {
+        apiSongs.apply {
+            clear()
+            addAll(songs)
+        }
+
+        mSongs.postValue(apiSongs)
     }
 }

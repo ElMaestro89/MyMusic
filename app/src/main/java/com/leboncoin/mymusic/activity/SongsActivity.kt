@@ -30,6 +30,7 @@ class SongsActivity : AppCompatActivity() {
 
         initList()
         initData()
+        loadData()
     }
 
     private fun initList() {
@@ -51,6 +52,10 @@ class SongsActivity : AppCompatActivity() {
         }
     }
 
+    private fun loadData() {
+        songsViewModel.getSongs()
+    }
+
     /**************
      *    MENU    *
      **************/
@@ -61,8 +66,11 @@ class SongsActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //TODO: Check if online or not
-        if (item.itemId == R.id.action_refresh)
-            songsViewModel.getSongs()
+        when (item.itemId) {
+            R.id.action_db -> songsViewModel.getDBSongs()
+            R.id.action_db_delete -> songsViewModel.deleteAllSongs()
+            R.id.action_refresh -> songsViewModel.getSongs()
+        }
 
         return super.onOptionsItemSelected(item)
     }
