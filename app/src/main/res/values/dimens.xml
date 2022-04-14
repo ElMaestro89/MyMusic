@@ -2,5 +2,6 @@
 <resources>
     <dimen name="thumbnail_size">75dp</dimen>
     <dimen name="text_list_margin_start_end">10dp</dimen>
+    <dimen name="album_padding">10dp</dimen>
     <dimen name="scrollbar_size">5dp</dimen>
 </resources>

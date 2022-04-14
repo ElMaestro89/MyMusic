@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMusic">
         <activity
-            android:name=".activity.SongsActivity"
+            android:name=".activity.AlbumsActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

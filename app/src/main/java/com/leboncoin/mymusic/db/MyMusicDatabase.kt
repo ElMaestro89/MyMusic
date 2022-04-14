@@ -1,16 +1,21 @@
-package com.leboncoin.mymusic.room
+package com.leboncoin.mymusic.db
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.leboncoin.mymusic.R
+import com.leboncoin.mymusic.poko.Album
 import com.leboncoin.mymusic.poko.Song
+import com.leboncoin.mymusic.db.converter.SongsConverter
+import com.leboncoin.mymusic.db.dao.IAlbumDAO
 
-@Database(entities = [Song::class], version = 1, exportSchema = false)
+@Database(entities = [Album::class, Song::class], version = 1, exportSchema = false)
+@TypeConverters(SongsConverter::class)
 abstract class MyMusicDatabase: RoomDatabase() {
 
-    abstract fun songsDao(): ISongsDAO
+    abstract fun albumsDao(): IAlbumDAO
 
     companion object {
         @Volatile

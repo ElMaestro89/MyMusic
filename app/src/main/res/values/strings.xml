@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">MyMusic</string>
 
+    <!-- Toolbar menu -->
     <string name="action_db">Check DB</string>
     <string name="action_delete_db">Delete DB</string>
     <string name="action_refresh">Refresh</string>
+
+    <string name="album_title">Album %d</string>
     <string name="thumbnail_description">Song thumbnail</string>
 </resources>
